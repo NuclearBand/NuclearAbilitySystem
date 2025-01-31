@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <LangVersion>9</LangVersion>
+    <Nullable>enable</Nullable>
+    <Configurations>Debug;Release;Test</Configurations>
+    <Platforms>AnyCPU</Platforms>
+    <RootNamespace>AbilitySystem.Execution</RootNamespace>
+    <IsPackable>true</IsPackable>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>0.1.0</Version>
+    <Title>NuclearAbilitySystem</Title>
+    <Authors>Tr0sT</Authors>
+    <Description>A flexible ability system that allows creating, configuring, and executing abilities in games</Description>
+    <Copyright>Copyright (c) Tr0sT</Copyright>
+    <PackageProjectUrl>https://github.com/NuclearBand/NuclearAbilitySystem</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/NuclearBand/NuclearAbilitySystem/blob/main/LICENSE</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/NuclearBand/NuclearAbilitySystem</RepositoryUrl>
+    <PackageTags>gamedev, ability, skill, perk, rpg, modifier, damage, buff, debuff</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NUnit" Version="3.12.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.0.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
+  </ItemGroup>
+
+</Project>
