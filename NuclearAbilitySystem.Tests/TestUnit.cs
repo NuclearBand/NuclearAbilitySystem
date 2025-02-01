@@ -38,7 +38,7 @@ namespace Nuclear.AbilitySystem
             _features.Add(typeof(IHasPositionCombatFeature), new HasPositionCombatFeature(position));
         }
 
-        protected TestUnit(TestUnit testUnit) : base(testUnit)
+        private TestUnit(TestUnit testUnit) : base(testUnit)
         {
             Name = testUnit.Name;
             Health = testUnit.Health;

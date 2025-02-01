@@ -7,24 +7,43 @@
     <Nullable>enable</Nullable>
     <Configurations>Debug;Release;Test</Configurations>
     <Platforms>AnyCPU</Platforms>
-    <RootNamespace>AbilitySystem.Execution</RootNamespace>
+    <RootNamespace></RootNamespace>
     <IsPackable>true</IsPackable>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Version>0.1.0</Version>
     <Title>NuclearAbilitySystem</Title>
-    <Authors>Tr0sT</Authors>
+    <Authors>NuclearBand</Authors>
     <Description>A flexible ability system that allows creating, configuring, and executing abilities in games</Description>
-    <Copyright>Copyright (c) Tr0sT</Copyright>
+    <Copyright>Copyright (c) NuclearBand 2025</Copyright>
     <PackageProjectUrl>https://github.com/NuclearBand/NuclearAbilitySystem</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/NuclearBand/NuclearAbilitySystem/blob/main/LICENSE</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/NuclearBand/NuclearAbilitySystem</RepositoryUrl>
     <PackageTags>gamedev, ability, skill, perk, rpg, modifier, damage, buff, debuff</PackageTags>
+    <PackageIcon>icon.png</PackageIcon>
+    <RepositoryType>git</RepositoryType>
+    <PackageId>NuclearAbilitySystem</PackageId>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <Optimize>true</Optimize>
+    <DefineConstants>TRACE</DefineConstants>
+    <DebugType>none</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <OutputPath>bin\Release\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="NUnit" Version="3.12.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\Documentation\icon.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+      <Link>icon.png</Link>
+    </None>
   </ItemGroup>
 
 </Project>

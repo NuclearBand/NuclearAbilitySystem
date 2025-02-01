@@ -1,0 +1,38 @@
+name: Publish NuGet Package
+
+on:
+  push:
+    branches:
+      - main  # Публикация при пуше в ветку main
+    paths:
+      - 'NuclearAbilitySystem/**'  # Укажите правильный путь к проекту, если он отличается
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '6.0.x'  # Используем .NET 6.0, как указано в .csproj
+
+    - name: Restore dependencies
+      run: dotnet restore NuclearAbilitySystem/NuclearAbilitySystem.csproj
+
+    - name: Build
+      run: dotnet build NuclearAbilitySystem/NuclearAbilitySystem.csproj --configuration Test --no-restore
+
+    - name: Test
+      run: dotnet test NuclearAbilitySystem/NuclearAbilitySystem.csproj --configuration Test --no-build --verbosity normal
+
+    - name: Pack NuGet Package (auto-generated on build)
+      run: dotnet build NuclearAbilitySystem/NuclearAbilitySystem.csproj --configuration Release --no-restore
+
+    - name: Publish to NuGet
+      env:
+        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+      run: dotnet nuget push NuclearAbilitySystem/bin/Release/*.nupkg --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json

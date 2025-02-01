@@ -1,4 +1,10 @@
+<p align="center">
+<img src="Documentation/icon.png"/>
+</p>
+
 # Nuclear Ability System
+
+[![Nuget](https://img.shields.io/nuget/v/NuclearAbilitySystem)](https://www.nuget.org/packages/NuclearAbilitySystem/)
 
 A flexible ability system that allows creating, configuring, and executing abilities in games
 
