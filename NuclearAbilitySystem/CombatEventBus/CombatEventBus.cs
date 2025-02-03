@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace Nuclear.AbilitySystem
@@ -36,6 +37,8 @@ namespace Nuclear.AbilitySystem
         {
             return _units.First(u => EqualityComparer<IUnitId>.Default.Equals(u.Id, unitId)); 
         }
+
+        public ReadOnlyCollection<IUnit> GetUnits() => _units.AsReadOnly();
 
         public void Subscribe<TEvent, TResult>(Func<TEvent, TResult?, TResult?> func) 
             where TEvent : ICombatEvent
