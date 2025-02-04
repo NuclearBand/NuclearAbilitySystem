@@ -19,6 +19,11 @@ namespace Nuclear.AbilitySystem
             return new CombatEventBus(unitClones);
         }
         
+        public static ICombatEventBus CreateWithoutClone(List<IUnit> units)
+        {
+            return new CombatEventBus(units);
+        }
+        
         private CombatEventBus(List<IUnit> units)
         {
             _commandQueue = new CommandQueue();
