@@ -9,7 +9,7 @@
     <Platforms>AnyCPU</Platforms>
     <IsPackable>true</IsPackable>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.1.4</Version>
+    <Version>0.1.5</Version>
     <Title>NuclearAbilitySystem</Title>
     <Authors>NuclearBand</Authors>
     <Description>A flexible ability system that allows creating, configuring, and executing abilities in games</Description>

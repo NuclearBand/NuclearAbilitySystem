@@ -5,8 +5,10 @@ namespace Nuclear.AbilitySystem
 {
     public interface IAbility
     {
-        bool CanExecute(IUnitId source, IUnitId? target, IAbilityContextHolder abilityContext);
-        void Execute(IUnitId source, IUnitId? target, ICombatEventBus context, IAbilityContextHolder abilityContext);
+        ReadOnlyCollection<IAbilityAction> Actions { get; }
+        ReadOnlyCollection<IAbilityCheck> Checks { get; }
+        bool CanExecute(IUnitId sourceId, IUnitId? targetId, IAbilityContextHolder abilityContext);
+        void Execute(IUnitId sourceId, IUnitId? targetId, ICombatEventBus context, IAbilityContextHolder abilityContext);
         IAbility DeepClone();
     }
 
@@ -22,20 +24,23 @@ namespace Nuclear.AbilitySystem
             _abilityChecks = abilityChecks;
         }
 
-        public bool CanExecute(IUnitId source, IUnitId? target, IAbilityContextHolder abilityContext)
+        public ReadOnlyCollection<IAbilityAction> Actions => _abilityActions;
+        public ReadOnlyCollection<IAbilityCheck> Checks => _abilityChecks;
+
+        public bool CanExecute(IUnitId sourceId, IUnitId? targetId, IAbilityContextHolder abilityContext)
         {
-            return _abilityChecks.All(a => a.CanExecute(source, target, abilityContext));
+            return _abilityChecks.All(a => a.CanExecute(sourceId, targetId, abilityContext));
         }
 
-        public void Execute(IUnitId source, IUnitId? target, ICombatEventBus context, IAbilityContextHolder abilityContext)
+        public void Execute(IUnitId sourceId, IUnitId? targetId, ICombatEventBus context, IAbilityContextHolder abilityContext)
         {
             foreach (var abilityCheck in _abilityChecks)
             {
-                abilityCheck.Execute(source, target, abilityContext);
+                abilityCheck.Execute(sourceId, targetId, abilityContext);
             }
             foreach (var abilityAction in _abilityActions)
             {
-                abilityAction.Execute(source, target, context, abilityContext);
+                abilityAction.Execute(sourceId, targetId, context, abilityContext);
             }
         }
 
