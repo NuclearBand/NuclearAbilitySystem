@@ -11,7 +11,7 @@ namespace Nuclear.AbilitySystem
 
         public Vector2 Position { get; }
 
-        public void Subscribe(ICombatEventBus combatEventBus) { }
+        public void Subscribe(ICombatState combatState) { }
         public void UnSubscribe() { }
 
         public ICombatFeature DeepClone()

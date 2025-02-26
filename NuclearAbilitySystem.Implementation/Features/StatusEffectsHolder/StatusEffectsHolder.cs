@@ -8,7 +8,7 @@ namespace Nuclear.AbilitySystem
         private readonly List<IStatusEffect> _statusEffects = new();
         private readonly IUnitId _unitId;
         
-        private ICombatEventBus? _combatEventBus;
+        private ICombatState? _combatState;
 
         public ReadOnlyCollection<IStatusEffect> StatusEffects => _statusEffects.AsReadOnly();
 
@@ -17,19 +17,19 @@ namespace Nuclear.AbilitySystem
             _unitId = unitId;
         }
 
-        public void Subscribe(ICombatEventBus combatEventBus)
+        public void Subscribe(ICombatState combatState)
         {
-            _combatEventBus = combatEventBus;
-            var unit = _combatEventBus.GetUnit(_unitId);
+            _combatState = combatState;
+            var unit = _combatState.GetUnit(_unitId);
             foreach (var statusEffect in _statusEffects)
             {
-                statusEffect.Subscribe(_combatEventBus);
+                statusEffect.Subscribe(_combatState);
             }
         }
 
         public void UnSubscribe()
         {
-            _combatEventBus = null;
+            _combatState = null;
             foreach (var statusEffect in _statusEffects)
             {
                 statusEffect.UnSubscribe();

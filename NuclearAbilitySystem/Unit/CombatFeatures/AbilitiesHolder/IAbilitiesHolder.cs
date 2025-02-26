@@ -13,7 +13,7 @@ namespace Nuclear.AbilitySystem
     {
         private readonly List<IAbility> _abilities = new();
         
-        public void Subscribe(ICombatEventBus combatEventBus)
+        public void Subscribe(ICombatState combatState)
         {
         }
 

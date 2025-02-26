@@ -19,19 +19,17 @@ namespace AbilitySystemTests
             attackerA.AddAbility(DoubleStrikeAbility.Create());
             
             // Ability execution
-            var combatEventsContext = CombatEventBus.DeepCloneAndCreate(new() {attackerA, targetB, bullyC});
-            var abilityContext = new AbilityContextHolder(combatEventsContext);
-            var doubleStrikeAbility = combatEventsContext.GetUnit(attackerA.Id).GetCombatFeature<IAbilitiesHolder>().Abilities[0];
-            abilityContext.GetContext<ITimeAbilityContext>().NextTurn();
+            ICombatState state = new CombatState(new() {attackerA, targetB, bullyC}, new AbilityContextHolder());
+            var doubleStrikeAbility = state.GetUnit(attackerA.Id).GetCombatFeature<IAbilitiesHolder>().Abilities[0];
+            state.AbilityContextHolder.GetContext<ITimeAbilityContext>().NextTurn();
             
-            Assert.AreEqual(true, doubleStrikeAbility.CanExecute(null!, null!, abilityContext));
+            Assert.AreEqual(true, doubleStrikeAbility.CanExecute(null!, null!, state));
             doubleStrikeAbility.Execute(
                 attackerA.Id,
                 targetB.Id,
-                combatEventsContext,
-                abilityContext);
+                state);
             
-            var result = combatEventsContext.CommandQueue.CalculateCommandQueue();
+            var result = state.CommandQueue.CalculateCommandQueue();
             
             // Tests
             Assert.AreEqual(6, result.Count); 
@@ -42,8 +40,8 @@ namespace AbilitySystemTests
             Assert.Contains(new AttackCombatCommand(attackerA.Id, targetB.Id, attackerA.Damage, 3), result);
             Assert.Contains(new AttackCombatCommand(bullyC.Id, targetB.Id, bullyC.Damage, 3), result);
             
-            Assert.AreEqual(false, doubleStrikeAbility.CanExecute(null!, null!, abilityContext));
-            combatEventsContext.Dispose();
+            Assert.AreEqual(false, doubleStrikeAbility.CanExecute(null!, null!, state));
+            state.Dispose();
         }
         
         [Test]
@@ -54,17 +52,17 @@ namespace AbilitySystemTests
             var bullyC = new TestUnit("C", 5, 1, new Vector2(0, 0));
             bullyC.AddBullyStatusEffect();
 
-            var combatEventsContext = CombatEventBus.DeepCloneAndCreate(new List<IUnit>{attackerA, targetB, bullyC});
-
-
-            combatEventsContext.GetUnit(attackerA.Id).GetCombatFeature<IDamageable>().DealDamage(combatEventsContext.GetUnit(targetB.Id), 1);
-            combatEventsContext.GetUnit(attackerA.Id).GetCombatFeature<IDamageable>().DealDamage(combatEventsContext.GetUnit(targetB.Id), 1);
+            ICombatState state = new CombatState(new() {attackerA, targetB, bullyC}, new AbilityContextHolder());
+            
+            state.GetUnit(attackerA.Id).GetCombatFeature<IDamageable>().DealDamage(state.GetUnit(targetB.Id), 1);
+            state.GetUnit(attackerA.Id).GetCombatFeature<IDamageable>().DealDamage(state.GetUnit(targetB.Id), 1);
             
             // Anything above can be changed, but the result must be correct:
-            var result = combatEventsContext.CommandQueue.CalculateCommandQueue();
+            var result = state.CommandQueue.CalculateCommandQueue();
             Assert.AreEqual(2, result.Count); 
             Assert.AreEqual(new AttackCombatCommand(attackerA.Id, targetB.Id, 5, 0), result[0]);
             Assert.AreEqual(new DeathCombatCommand(targetB.Id, 0), result[1]);
+            state.Dispose();
         }
         
         [Test]
@@ -79,15 +77,15 @@ namespace AbilitySystemTests
             bullyC.AddBullyStatusEffect();
             bullyD.AddBullyStatusEffect();
 
-            var combatEventsContext = CombatEventBus.DeepCloneAndCreate(new List<IUnit>{attackerA, targetB, bullyC, bullyD});
+            ICombatState state = new CombatState(new List<IUnit>{attackerA, targetB, bullyC, bullyD}, new AbilityContextHolder());
+            
 
-
-            combatEventsContext.GetUnit(attackerA.Id).GetCombatFeature<IDamageable>().DealDamage(combatEventsContext.GetUnit(targetB.Id), 1);
-            combatEventsContext.GetUnit(attackerA.Id).GetCombatFeature<IDamageable>().DealDamage(combatEventsContext.GetUnit(targetB.Id), 1);
+            state.GetUnit(attackerA.Id).GetCombatFeature<IDamageable>().DealDamage(state.GetUnit(targetB.Id), 1);
+            state.GetUnit(attackerA.Id).GetCombatFeature<IDamageable>().DealDamage(state.GetUnit(targetB.Id), 1);
 
 
             // Anything above can be changed, but the result must be correct:
-            var result = combatEventsContext.CommandQueue.CalculateCommandQueue();
+            var result = state.CommandQueue.CalculateCommandQueue();
             Assert.AreEqual(6, result.Count);
             Assert.AreEqual(new AttackCombatCommand(attackerA.Id, targetB.Id, attackerA.Damage, 0), result[0]); // 4 хп
             Assert.AreEqual(new AttackCombatCommand(bullyC.Id, targetB.Id, bullyC.Damage, 0), result[1]); // 3 хп
@@ -95,6 +93,7 @@ namespace AbilitySystemTests
             Assert.AreEqual(new AttackCombatCommand(bullyC.Id, targetB.Id, bullyC.Damage, 0), result[3]); // 1 хп
             Assert.AreEqual(new AttackCombatCommand(bullyD.Id, targetB.Id, bullyD.Damage, 0), result[4]); // 0 хп
             Assert.AreEqual(new DeathCombatCommand(targetB.Id, 0), result[5]);
+            state.Dispose();
         }
         
         [Test]
@@ -105,18 +104,19 @@ namespace AbilitySystemTests
             var defenderE = new TestUnit("E", 5, 1, new Vector2(0, 0));
             defenderE.AddDefenderStatusEffect();
             
-            var combatEventsContext = CombatEventBus.DeepCloneAndCreate(new List<IUnit>{attackerA, targetB, defenderE});
+            ICombatState state = new CombatState(new List<IUnit>{attackerA, targetB, defenderE}, new AbilityContextHolder());
+            
 
-
-            combatEventsContext.GetUnit(attackerA.Id).GetCombatFeature<IDamageable>().DealDamage(combatEventsContext.GetUnit(targetB.Id), 1);
+            state.GetUnit(attackerA.Id).GetCombatFeature<IDamageable>().DealDamage(state.GetUnit(targetB.Id), 1);
             
             
             // Anything above can be changed, but the result must be correct:
-            var result = combatEventsContext.CommandQueue.CalculateCommandQueue();
+            var result = state.CommandQueue.CalculateCommandQueue();
             Assert.AreEqual(3, result.Count); 
             Assert.AreEqual(new TryAttackCombatCommand(attackerA.Id, targetB.Id, 0), result[0]);
             Assert.AreEqual(new DefendCombatCommand(defenderE.Id, targetB.Id, 0), result[1]);
             Assert.AreEqual(new AttackCombatCommand(attackerA.Id, defenderE.Id, attackerA.Damage, 0), result[2]);
+            state.Dispose();
         }
         
         [Test]
@@ -130,19 +130,20 @@ namespace AbilitySystemTests
             bullyC.AddBullyStatusEffect();
             defenderD.AddDefenderStatusEffect();
             
-            var combatEventsContext = CombatEventBus.DeepCloneAndCreate(new List<IUnit> { attackerA, targetB, bullyC, defenderD });
+            ICombatState state = new CombatState(new List<IUnit> { attackerA, targetB, bullyC, defenderD.DeepClone() }, new AbilityContextHolder());
             
-            combatEventsContext.GetUnit(attackerA.Id).GetCombatFeature<IDamageable>().DealDamage(combatEventsContext.GetUnit(targetB.Id), 1);
+            state.GetUnit(attackerA.Id).GetCombatFeature<IDamageable>().DealDamage(state.GetUnit(targetB.Id), 1);
             
-            var result = combatEventsContext.CommandQueue.CalculateCommandQueue();
+            var result = state.CommandQueue.CalculateCommandQueue();
             Assert.AreEqual(4, result.Count);
             Assert.AreEqual(new TryAttackCombatCommand(attackerA.Id, targetB.Id, 0), result[0]);
             Assert.AreEqual(new DefendCombatCommand(defenderD.Id, targetB.Id, 0), result[1]);
             Assert.AreEqual(new AttackCombatCommand(attackerA.Id, defenderD.Id, attackerA.Damage, 0), result[2]);
             Assert.AreEqual(new AttackCombatCommand(bullyC.Id, defenderD.Id, bullyC.Damage, 0), result[3]);
-            Assert.AreEqual(5, ((TestUnit)combatEventsContext.GetUnit(targetB.Id)).Health);
-            Assert.AreEqual(3, ((TestUnit)combatEventsContext.GetUnit(defenderD.Id)).Health);
+            Assert.AreEqual(5, ((TestUnit)state.GetUnit(targetB.Id)).Health);
+            Assert.AreEqual(3, ((TestUnit)state.GetUnit(defenderD.Id)).Health);
             Assert.AreEqual(5, defenderD.Health);
+            state.Dispose();
         }
     }
 }

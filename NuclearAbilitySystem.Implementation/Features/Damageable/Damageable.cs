@@ -8,7 +8,7 @@ namespace Nuclear.AbilitySystem
         private readonly Func<IUnit, int, int> _doDamage;
         private readonly Func<IUnit, int> _getDamage;
         
-        private ICombatEventBus? _combatEventBus;
+        private ICombatState? _combatState;
         private IUnit? _unit;
 
         public Damageable(IUnitId unitId,
@@ -23,15 +23,15 @@ namespace Nuclear.AbilitySystem
             _getDamage = getDamage;
         }
 
-        public void Subscribe(ICombatEventBus combatEventBus)
+        public void Subscribe(ICombatState combatState)
         {
-            _combatEventBus = combatEventBus;
-            _unit = _combatEventBus.GetUnit(UnitId);
+            _combatState = combatState;
+            _unit = _combatState.GetUnit(UnitId);
         }
 
         public void UnSubscribe()
         {
-            _combatEventBus = null;
+            _combatState = null;
             _unit = null;
         }
 
@@ -61,7 +61,7 @@ namespace Nuclear.AbilitySystem
 
         public int DealDamage(IUnit target, float multiplier)
         {
-            if (_combatEventBus == null || _unit == null)
+            if (_combatState == null || _unit == null)
             {
                 throw new();
             }
@@ -74,7 +74,7 @@ namespace Nuclear.AbilitySystem
 
             var damage = (int)MathF.Round(_getDamage.Invoke(_unit) * multiplier);
             
-            if (_combatEventBus.Raise<PreDamageEvent, DamageEventResult>(new PreDamageEvent(_unit, target, damage)) 
+            if (_combatState.CombatEventBus.Raise<PreDamageEvent, DamageEventResult>(new PreDamageEvent(_unit, target, damage)) 
                 is { ContinueExecution: false})
             {
                 return 0;
@@ -83,13 +83,13 @@ namespace Nuclear.AbilitySystem
             var result = targetDamageable.TakeDamage(damage);
             
             // по-хорошему перенести выше и ввести CalcTakeDamage damage?
-            _combatEventBus.CommandQueue.Add(new AttackCombatCommand(_unit.Id, targetDamageable.UnitId, result, _combatEventBus.CommandQueue.Time)); 
+            _combatState.CommandQueue.Add(new AttackCombatCommand(_unit.Id, targetDamageable.UnitId, result, _combatState.CommandQueue.Time)); 
             if (!targetDamageable.CanInteract) // а это убрать внутрь TakeDamage
             {
-                _combatEventBus.CommandQueue.Add(new DeathCombatCommand(targetDamageable.UnitId, _combatEventBus.CommandQueue.Time));
+                _combatState.CommandQueue.Add(new DeathCombatCommand(targetDamageable.UnitId, _combatState.CommandQueue.Time));
             }
             
-            _combatEventBus.Raise<AfterDamageEvent, DamageEventResult>(new AfterDamageEvent(_unit, target, result));
+            _combatState.CombatEventBus.Raise<AfterDamageEvent, DamageEventResult>(new AfterDamageEvent(_unit, target, result));
             return result;
         }
 

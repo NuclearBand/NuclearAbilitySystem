@@ -1,49 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 
 namespace Nuclear.AbilitySystem
 {
-    public sealed class CombatEventBus : ICombatEventBus
+    internal sealed class CombatEventBus : ICombatEventBus
     {
         private readonly Dictionary<Type, List<Delegate>> _combatEvents = new();
-
-        private readonly List<IUnit> _units;
-        private readonly CommandQueue _commandQueue;
-
-        public static ICombatEventBus DeepCloneAndCreate(List<IUnit> units)
-        {
-            var unitClones = new List<IUnit>(units.Count);
-            unitClones.AddRange(units.Select(u => u.DeepClone()));
-            return new CombatEventBus(unitClones);
-        }
-        
-        public static ICombatEventBus CreateWithoutClone(List<IUnit> units)
-        {
-            return new CombatEventBus(units);
-        }
-        
-        private CombatEventBus(List<IUnit> units)
-        {
-            _commandQueue = new CommandQueue();
-            _units = units;
-            _units.ForEach(u => u.Subscribe(this));
-        }
-
-        public void Dispose()
-        {
-            _units.ForEach(u => u.UnSubscribe());
-        }
-
-        public ICommandQueue CommandQueue => _commandQueue;
-
-        public IUnit GetUnit(IUnitId unitId)
-        {
-            return _units.First(u => EqualityComparer<IUnitId>.Default.Equals(u.Id, unitId)); 
-        }
-
-        public ReadOnlyCollection<IUnit> GetUnits() => _units.AsReadOnly();
 
         public void Subscribe<TEvent, TResult>(Func<TEvent, TResult?, TResult?> func) 
             where TEvent : ICombatEvent

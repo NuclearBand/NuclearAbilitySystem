@@ -13,15 +13,15 @@ namespace Nuclear.AbilitySystem
             _lastCastTime = -startValue ?? -cooldown;
         }
 
-        public bool CanExecute(IUnitId source, IUnitId? target, IAbilityContextHolder context)
+        public bool CanExecute(IUnitId source, IUnitId? target, ICombatState context)
         {
-            var timeContext = context.GetContext<ITimeAbilityContext>();
+            var timeContext = context.AbilityContextHolder.GetContext<ITimeAbilityContext>();
             return GetCooldownTimer(timeContext) == 0;
         }
 
-        public void Execute(IUnitId source, IUnitId? target, IAbilityContextHolder context)
+        public void Execute(IUnitId source, IUnitId? target, ICombatState context)
         {
-            var timeContext = context.GetContext<ITimeAbilityContext>();
+            var timeContext = context.AbilityContextHolder.GetContext<ITimeAbilityContext>();
             _lastCastTime = timeContext.Time;
         }
 

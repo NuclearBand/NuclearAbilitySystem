@@ -7,8 +7,8 @@ namespace Nuclear.AbilitySystem
     {
         ReadOnlyCollection<IAbilityAction> Actions { get; }
         ReadOnlyCollection<IAbilityCheck> Checks { get; }
-        bool CanExecute(IUnitId sourceId, IUnitId? targetId, IAbilityContextHolder abilityContext);
-        void Execute(IUnitId sourceId, IUnitId? targetId, ICombatEventBus context, IAbilityContextHolder abilityContext);
+        bool CanExecute(IUnitId sourceId, IUnitId? targetId, ICombatState state);
+        void Execute(IUnitId sourceId, IUnitId? targetId, ICombatState state);
         IAbility DeepClone();
     }
 
@@ -27,20 +27,20 @@ namespace Nuclear.AbilitySystem
         public ReadOnlyCollection<IAbilityAction> Actions => _abilityActions;
         public ReadOnlyCollection<IAbilityCheck> Checks => _abilityChecks;
 
-        public bool CanExecute(IUnitId sourceId, IUnitId? targetId, IAbilityContextHolder abilityContext)
+        public bool CanExecute(IUnitId sourceId, IUnitId? targetId, ICombatState state)
         {
-            return _abilityChecks.All(a => a.CanExecute(sourceId, targetId, abilityContext));
+            return _abilityChecks.All(a => a.CanExecute(sourceId, targetId, state));
         }
 
-        public void Execute(IUnitId sourceId, IUnitId? targetId, ICombatEventBus context, IAbilityContextHolder abilityContext)
+        public void Execute(IUnitId sourceId, IUnitId? targetId, ICombatState state)
         {
             foreach (var abilityCheck in _abilityChecks)
             {
-                abilityCheck.Execute(sourceId, targetId, abilityContext);
+                abilityCheck.Execute(sourceId, targetId, state);
             }
             foreach (var abilityAction in _abilityActions)
             {
-                abilityAction.Execute(sourceId, targetId, context, abilityContext);
+                abilityAction.Execute(sourceId, targetId, state);
             }
         }
 

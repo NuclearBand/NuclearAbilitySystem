@@ -5,27 +5,27 @@ namespace Nuclear.AbilitySystem
     public sealed class Bully : IStatusEffect
     {
         private readonly IUnitId _unitId;
-        private ICombatEventBus? _combatEventBus;
+        private ICombatState? _combatState;
 
         public Bully(IUnitId unitId)
         {
             _unitId = unitId;
         }
         
-        public void Subscribe(ICombatEventBus combatEventBus)
+        public void Subscribe(ICombatState combatState)
         {
-            _combatEventBus = combatEventBus;
-            _combatEventBus.Subscribe<AfterDamageEvent, DamageEventResult>(OnAfterDamage);
+            _combatState = combatState;
+            _combatState.CombatEventBus.Subscribe<AfterDamageEvent, DamageEventResult>(OnAfterDamage);
         }
 
         public void UnSubscribe()
         {
-            if (_combatEventBus == null)
+            if (_combatState == null)
             {
                 return;
             }
-            _combatEventBus.Unsubscribe<AfterDamageEvent, DamageEventResult>(OnAfterDamage);
-            _combatEventBus = null;
+            _combatState.CombatEventBus.Unsubscribe<AfterDamageEvent, DamageEventResult>(OnAfterDamage);
+            _combatState = null;
         }
 
         public IStatusEffect DeepClone()
@@ -39,7 +39,7 @@ namespace Nuclear.AbilitySystem
             {
                 return previousResult;
             }
-            if (_combatEventBus == null)
+            if (_combatState == null)
             {
                 throw new();
             }
@@ -50,7 +50,7 @@ namespace Nuclear.AbilitySystem
                 return previousResult ?? new (true);
             }
 
-            var unit = _combatEventBus.GetUnit(_unitId);
+            var unit = _combatState.GetUnit(_unitId);
             
             unit.GetCombatFeature<IDamageable>().DealDamage(@event.Target, 1);
             return new(false);

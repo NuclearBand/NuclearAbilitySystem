@@ -6,7 +6,7 @@ namespace Nuclear.AbilitySystem
     public abstract class Unit : IUnit
     {
         protected readonly Dictionary<Type, ICombatFeature> _features = new();
-        protected ICombatEventBus? _combatEventBus;
+        protected ICombatState? _combatState;
         
         protected Unit(IUnitId id)
         {
@@ -31,19 +31,19 @@ namespace Nuclear.AbilitySystem
 
         public abstract IUnit DeepClone();
 
-        public void Subscribe(ICombatEventBus combatEventBus)
+        public void Subscribe(ICombatState combatState)
         {
-            _combatEventBus = combatEventBus;
+            _combatState = combatState;
 
             foreach (var combatFeature in _features)
             {
-                combatFeature.Value.Subscribe(combatEventBus);
+                combatFeature.Value.Subscribe(combatState);
             }
         }
 
         public void UnSubscribe()
         {
-            _combatEventBus = null;
+            _combatState = null;
             
             foreach (var combatFeature in _features)
             {

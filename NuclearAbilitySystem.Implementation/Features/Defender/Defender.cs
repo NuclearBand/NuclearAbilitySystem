@@ -5,7 +5,7 @@ namespace Nuclear.AbilitySystem
     public sealed class Defender : IStatusEffect
     {
         private readonly IUnitId _unitId;
-        private ICombatEventBus? _combatEventBus;
+        private ICombatState? _combatState;
 
 
         public Defender(IUnitId unitId)
@@ -13,20 +13,20 @@ namespace Nuclear.AbilitySystem
             _unitId = unitId;
         }
 
-        public void Subscribe(ICombatEventBus combatEventBus)
+        public void Subscribe(ICombatState combatState)
         {
-            _combatEventBus = combatEventBus;
-            _combatEventBus.Subscribe<PreDamageEvent, DamageEventResult>(OnPreDamage);
+            _combatState = combatState;
+            _combatState.CombatEventBus.Subscribe<PreDamageEvent, DamageEventResult>(OnPreDamage);
         }
 
         public void UnSubscribe()
         {
-            if (_combatEventBus == null)
+            if (_combatState == null)
             {
                 return;
             }
-            _combatEventBus.Unsubscribe<PreDamageEvent, DamageEventResult>(OnPreDamage);
-            _combatEventBus = null;
+            _combatState.CombatEventBus.Unsubscribe<PreDamageEvent, DamageEventResult>(OnPreDamage);
+            _combatState = null;
         }
 
         public IStatusEffect DeepClone()
@@ -40,7 +40,7 @@ namespace Nuclear.AbilitySystem
             {
                 return previousResult;
             }
-            if (_combatEventBus == null)
+            if (_combatState == null)
             {
                 throw new();
             }
@@ -50,10 +50,10 @@ namespace Nuclear.AbilitySystem
                 return previousResult ?? new (true);
             }
 
-            var unit = _combatEventBus.GetUnit(_unitId);
+            var unit = _combatState.GetUnit(_unitId);
             
-            _combatEventBus.CommandQueue.Add(new TryAttackCombatCommand(@event.Source.Id, @event.Target.Id, _combatEventBus.CommandQueue.Time));
-            _combatEventBus.CommandQueue.Add(new DefendCombatCommand(_unitId, @event.Target.Id, _combatEventBus.CommandQueue.Time));
+            _combatState.CommandQueue.Add(new TryAttackCombatCommand(@event.Source.Id, @event.Target.Id, _combatState.CommandQueue.Time));
+            _combatState.CommandQueue.Add(new DefendCombatCommand(_unitId, @event.Target.Id, _combatState.CommandQueue.Time));
             @event.Source.GetCombatFeature<IDamageable>().DealDamage(unit, 1);
             return new (false);
         }
