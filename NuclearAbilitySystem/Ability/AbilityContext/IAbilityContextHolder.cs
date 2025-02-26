@@ -4,5 +4,7 @@ namespace Nuclear.AbilitySystem
     {
         T GetContext<T>() where T : IAbilityContext;
         IAbilityContextHolder DeepClone();
+        void Subscribe(ICombatState combatState);
+        void UnSubscribe();
     }
 }

@@ -29,7 +29,7 @@ namespace Nuclear.AbilitySystem
                 return;
 
             var distanceContext = context.AbilityContextHolder.GetContext<IDistanceBetweenUnitsAbilityContext>();
-            var distance = distanceContext.GetDistanceBetween(context, sourceId, targetId!);
+            var distance = distanceContext.GetDistanceBetween(sourceId, targetId!);
             var flyingTime = (int)(Math.Round(distance / Velocity)); 
             context.CommandQueue.Add(new CreateProjectileCombatCommand(sourceId, targetId!, flyingTime, context.CommandQueue.Time));
 

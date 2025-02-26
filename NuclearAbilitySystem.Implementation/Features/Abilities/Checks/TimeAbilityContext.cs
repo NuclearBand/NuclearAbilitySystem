@@ -17,5 +17,13 @@ namespace Nuclear.AbilitySystem
         {
             return new TimeAbilityContext(Time);
         }
+
+        public void Subscribe(ICombatState combatState)
+        {
+        }
+
+        public void UnSubscribe()
+        {
+        }
     }
 }

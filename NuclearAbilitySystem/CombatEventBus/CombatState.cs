@@ -40,11 +40,13 @@ namespace Nuclear.AbilitySystem
         private void Subscribe()
         {
             _units.ForEach(u => u.Subscribe(this));
+            _abilityContextHolder.Subscribe(this);
         }
 
         private void UnSubscribe()
         {
             _units.ForEach(u => u.UnSubscribe());
+            _abilityContextHolder.UnSubscribe();
         }
         
         public ICombatState DeepClone()

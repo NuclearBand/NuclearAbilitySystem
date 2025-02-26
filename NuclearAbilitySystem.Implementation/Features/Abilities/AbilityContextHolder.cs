@@ -29,5 +29,21 @@ namespace Nuclear.AbilitySystem
         {
             return new AbilityContextHolder(this);
         }
+
+        public void Subscribe(ICombatState combatState)
+        {
+            foreach (var context in _contexts.Values)
+            {
+                context.Subscribe(combatState);
+            }
+        }
+
+        public void UnSubscribe()
+        {
+            foreach (var context in _contexts.Values)
+            {
+                context.UnSubscribe();
+            }
+        }
     }
 }
