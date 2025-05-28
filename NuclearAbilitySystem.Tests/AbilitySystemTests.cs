@@ -41,6 +41,7 @@ namespace AbilitySystemTests
             Assert.Contains(new AttackCombatCommand(bullyC.Id, targetB.Id, bullyC.Damage, 3), result);
             
             Assert.AreEqual(false, doubleStrikeAbility.CanExecute(null!, null!, state));
+            Assert.AreEqual(3, state.CommandQueue.FinalTime);
             state.Dispose();
         }
         

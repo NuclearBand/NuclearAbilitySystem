@@ -35,6 +35,7 @@ namespace Nuclear.AbilitySystem
 
             if (OnEnd != null)
             {
+                context.CommandQueue.UpdateFinalTime(context.CommandQueue.Time + flyingTime);
                 context.CommandQueue.AddTimeEvent(context.CommandQueue.Time + flyingTime, () =>
                 {
                     foreach (var onEndAction in OnEnd)

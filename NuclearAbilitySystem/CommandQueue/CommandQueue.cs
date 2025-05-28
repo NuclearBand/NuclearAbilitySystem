@@ -10,6 +10,7 @@ namespace Nuclear.AbilitySystem
         private readonly TimeEvents _timeEvents;
 
         public int Time { get; private set; }
+        public int FinalTime { get; private set; }
 
         internal CommandQueue()
         {
@@ -26,6 +27,11 @@ namespace Nuclear.AbilitySystem
             _timeEvents.AddTimeEvent(time, action);
         }
 
+        public void UpdateFinalTime(int time)
+        {
+            FinalTime = Math.Max(FinalTime, time);
+        }
+
         public ReadOnlyCollection<ICombatCommand> CalculateCommandQueue()
         {
             while (!_timeEvents.IsMaxTime(Time))
@@ -38,7 +44,7 @@ namespace Nuclear.AbilitySystem
         private void UpdateTime()
         {
             Time += 1;
-            
+            UpdateFinalTime(Time);
            _timeEvents.UpdateTime(Time);
         }
     }
