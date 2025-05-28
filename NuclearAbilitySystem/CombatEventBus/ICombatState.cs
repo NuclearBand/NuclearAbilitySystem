@@ -11,5 +11,6 @@ namespace Nuclear.AbilitySystem
         ICombatEventBus CombatEventBus { get; }
         ICommandQueue CommandQueue { get; }
         ICombatState DeepClone();
+        void Reset();
     }
 }

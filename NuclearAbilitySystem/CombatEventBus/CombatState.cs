@@ -8,8 +8,8 @@ namespace Nuclear.AbilitySystem
     {
         private readonly List<IUnit> _units;
         private readonly IAbilityContextHolder _abilityContextHolder;
-        private readonly CommandQueue _commandQueue;
-        private readonly CombatEventBus _combatEventBus;
+        private CommandQueue _commandQueue;
+        private CombatEventBus _combatEventBus;
 
         public CombatState(List<IUnit> units, IAbilityContextHolder abilityContextHolder)
         {
@@ -53,6 +53,14 @@ namespace Nuclear.AbilitySystem
         {
             return new CombatState(_units.Select(u => u.DeepClone()).ToList(),
                 _abilityContextHolder.DeepClone());
+        }
+
+        public void Reset()
+        {
+            UnSubscribe();
+            _commandQueue = new CommandQueue();
+            _combatEventBus = new CombatEventBus();
+            Subscribe();
         }
     }
 }

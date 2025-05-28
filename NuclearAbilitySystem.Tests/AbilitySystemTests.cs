@@ -146,5 +146,37 @@ namespace AbilitySystemTests
             Assert.AreEqual(5, defenderD.Health);
             state.Dispose();
         }
+        
+                [Test]
+        public void TwoAbilities()
+        {
+            // Setup
+            var attackerA = new TestUnit("A", 5, 1, new Vector2(0, 0));
+            var targetB = new TestUnit("B", 5, 0, new Vector2(0, 2));
+            
+            attackerA.AddAbility(SimpleAbility.Create());
+            
+            // Ability execution
+            ICombatState state = new CombatState(new() {attackerA, targetB}, new AbilityContextHolder());
+            var simpleAbility = state.GetUnit(attackerA.Id).GetCombatFeature<IAbilitiesHolder>().Abilities[0];
+            state.AbilityContextHolder.GetContext<ITimeAbilityContext>().NextTurn();
+            
+            Assert.AreEqual(true, simpleAbility.CanExecute(null!, null!, state));
+            simpleAbility.Execute(
+                attackerA.Id,
+                targetB.Id,
+                state);
+            state.CommandQueue.CalculateCommandQueue();
+            
+            state.Reset();
+            simpleAbility.Execute(
+                attackerA.Id,
+                targetB.Id,
+                state);
+            state.CommandQueue.CalculateCommandQueue();
+            
+            
+            state.Dispose();
+        }
     }
 }

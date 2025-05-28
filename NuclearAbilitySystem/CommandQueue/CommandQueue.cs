@@ -41,5 +41,5 @@ namespace Nuclear.AbilitySystem
             
            _timeEvents.UpdateTime(Time);
         }
-    }
+   }
 }
