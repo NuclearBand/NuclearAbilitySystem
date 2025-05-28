@@ -8,13 +8,11 @@ namespace Nuclear.AbilitySystem
         void Add(ICombatCommand combatCommand);
         int Time { get; }
         void AddTimeEvent(int time, Action action);
-        void UpdateFinalTime(int time);
-
+        
     }
 
     public interface IReadOnlyCommandQueue
     {
         ReadOnlyCollection<ICombatCommand> CalculateCommandQueue();
-        int FinalTime { get; }
     }
 }
