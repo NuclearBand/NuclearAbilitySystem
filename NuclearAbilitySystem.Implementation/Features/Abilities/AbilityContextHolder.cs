@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 namespace Nuclear.AbilitySystem
 {
-    public sealed class AbilityContextHolder : IAbilityContextHolder
+    public sealed class AbilityContextHolder : IAbilityContextHolderMutable
     {
         private readonly Dictionary<Type, IAbilityContext> _contexts = new();
 
         public AbilityContextHolder()
         {
-            _contexts.Add(typeof(ITimeAbilityContext), new TimeAbilityContext(0));
+            _contexts.Add(typeof(ITurnAbilityContext), new TurnAbilityContext(0));
             _contexts.Add(typeof(IDistanceBetweenUnitsAbilityContext), new DistanceBetweenUnitsAbilityContext());
         }
         
@@ -25,24 +25,24 @@ namespace Nuclear.AbilitySystem
             return (T)_contexts[typeof(T)];
         }
 
-        public IAbilityContextHolder DeepClone()
+        public IAbilityContextHolderMutable DeepClone()
         {
             return new AbilityContextHolder(this);
         }
 
-        public void Subscribe(ICombatState combatState)
+        public void Connect(ICombatState combatState)
         {
             foreach (var context in _contexts.Values)
             {
-                context.Subscribe(combatState);
+                context.Connect(combatState);
             }
         }
 
-        public void UnSubscribe()
+        public void Disconnect()
         {
             foreach (var context in _contexts.Values)
             {
-                context.UnSubscribe();
+                context.Disconnect();
             }
         }
     }

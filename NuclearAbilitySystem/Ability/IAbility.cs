@@ -7,8 +7,8 @@ namespace Nuclear.AbilitySystem
     {
         ReadOnlyCollection<IAbilityAction> Actions { get; }
         ReadOnlyCollection<IAbilityCheck> Checks { get; }
-        bool CanExecute(IUnitId sourceId, IUnitId? targetId, ICombatState state);
-        void Execute(IUnitId sourceId, IUnitId? targetId, ICombatState state);
+        bool CanExecute(UnitId sourceId, UnitId? targetId, ICombatState state);
+        void Execute(UnitId sourceId, UnitId? targetId, ICombatStateMutable state);
         IAbility DeepClone();
     }
 
@@ -27,12 +27,12 @@ namespace Nuclear.AbilitySystem
         public ReadOnlyCollection<IAbilityAction> Actions => _abilityActions;
         public ReadOnlyCollection<IAbilityCheck> Checks => _abilityChecks;
 
-        public bool CanExecute(IUnitId sourceId, IUnitId? targetId, ICombatState state)
+        public bool CanExecute(UnitId sourceId, UnitId? targetId, ICombatState state)
         {
             return _abilityChecks.All(a => a.CanExecute(sourceId, targetId, state));
         }
 
-        public void Execute(IUnitId sourceId, IUnitId? targetId, ICombatState state)
+        public void Execute(UnitId sourceId, UnitId? targetId, ICombatStateMutable state)
         {
             foreach (var abilityCheck in _abilityChecks)
             {

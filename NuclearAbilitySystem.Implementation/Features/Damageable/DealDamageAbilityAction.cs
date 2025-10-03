@@ -10,12 +10,12 @@
             _target = target;
             _multiplier = multiplier;
         }
-        public void Execute(IUnitId source, IUnitId? target, ICombatState context)
+        public void Execute(UnitId source, UnitId? target, ICombatStateMutable context)
         {
             AbilityActionTargetExtensions.UpdateAbilityActionTarget(_target, source, target, 
                 out var abilitySource, out var abilityTarget);
             
-            context.GetUnit(abilitySource!).GetCombatFeature<IDamageable>().DealDamage(
+            context.GetUnit(abilitySource!).GetUnitFeature<IDamageable>().DealDamage(
                 context.GetUnit(abilityTarget!), _multiplier
             );
         }

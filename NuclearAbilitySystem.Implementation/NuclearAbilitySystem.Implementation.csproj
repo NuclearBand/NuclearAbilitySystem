@@ -4,6 +4,7 @@
         <TargetFramework>netstandard2.1</TargetFramework>
         <Nullable>enable</Nullable>
         <LangVersion>9</LangVersion>
+        <Version>1.0.1</Version>
     </PropertyGroup>
 
     <ItemGroup>

@@ -2,6 +2,6 @@ namespace Nuclear.AbilitySystem
 {
     public interface ICooldownAbilityCheck : IAbilityCheck
     {
-        int GetCooldownTimer(ITimeAbilityContext context);
+        int GetCooldownTimer(ITurnAbilityContext context);
     }
 }

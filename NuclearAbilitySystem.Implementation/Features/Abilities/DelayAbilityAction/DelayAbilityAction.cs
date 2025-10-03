@@ -14,7 +14,7 @@ namespace Nuclear.AbilitySystem
 
         public int Time { get; }
         public ReadOnlyCollection<IAbilityAction> OnEnd { get; }
-        public void Execute(IUnitId sourceId, IUnitId? targetId, ICombatState context)
+        public void Execute(UnitId sourceId, UnitId? targetId, ICombatStateMutable context)
         {
 
             context.CommandQueue.AddTimeEvent(context.CommandQueue.Time + Time, () =>

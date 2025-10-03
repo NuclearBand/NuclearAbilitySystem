@@ -13,21 +13,21 @@ namespace Nuclear.AbilitySystem
             _lastCastTime = -startValue ?? -cooldown;
         }
 
-        public bool CanExecute(IUnitId source, IUnitId? target, ICombatState context)
+        public bool CanExecute(UnitId source, UnitId? target, ICombatState context)
         {
-            var timeContext = context.AbilityContextHolder.GetContext<ITimeAbilityContext>();
+            var timeContext = context.AbilityContextHolder.GetContext<ITurnAbilityContext>();
             return GetCooldownTimer(timeContext) == 0;
         }
 
-        public void Execute(IUnitId source, IUnitId? target, ICombatState context)
+        public void Execute(UnitId source, UnitId? target, ICombatState context)
         {
-            var timeContext = context.AbilityContextHolder.GetContext<ITimeAbilityContext>();
-            _lastCastTime = timeContext.Time;
+            var timeContext = context.AbilityContextHolder.GetContext<ITurnAbilityContext>();
+            _lastCastTime = timeContext.Turn;
         }
 
-        public int GetCooldownTimer(ITimeAbilityContext timeContext)
+        public int GetCooldownTimer(ITurnAbilityContext turnContext)
         {
-            return Math.Max(0, _lastCastTime + _cooldown + 1 - timeContext.Time);
+            return Math.Max(0, _lastCastTime + _cooldown + 1 - turnContext.Turn);
         }
 
         public IAbilityCheck DeepClone()

@@ -8,35 +8,34 @@ namespace Nuclear.AbilitySystem
         private readonly Func<IUnit, int, int> _doDamage;
         private readonly Func<IUnit, int> _getDamage;
         
-        private ICombatState? _combatState;
+        private ICombatStateMutable? _combatState;
         private IUnit? _unit;
+        private readonly UnitId _unitId;
 
-        public Damageable(IUnitId unitId,
+        public Damageable(UnitId unitId,
             Func<IUnit, bool> canInteract,
             Func<IUnit, int, int> doDamage,
             Func<IUnit, int> getDamage)
         {
-            UnitId = unitId;
+            _unitId = unitId;
             
             _canInteract = canInteract;
             _doDamage = doDamage;
             _getDamage = getDamage;
         }
 
-        public void Subscribe(ICombatState combatState)
+        public void Connect(ICombatStateMutable combatState)
         {
             _combatState = combatState;
-            _unit = _combatState.GetUnit(UnitId);
+            _unit = _combatState.GetUnit(_unitId);
         }
 
-        public void UnSubscribe()
+        public void Disconnect()
         {
             _combatState = null;
             _unit = null;
         }
 
-        public IUnitId UnitId { get; }
-        
         public bool CanInteract
         {
             get
@@ -66,7 +65,7 @@ namespace Nuclear.AbilitySystem
                 throw new();
             }
             
-            var targetDamageable = target.GetCombatFeature<IDamageable>();
+            var targetDamageable = target.GetUnitFeature<IDamageable>();
             if (!CanInteract || !targetDamageable.CanInteract)
             {
                 return 0;
@@ -83,19 +82,19 @@ namespace Nuclear.AbilitySystem
             var result = targetDamageable.TakeDamage(damage);
             
             // по-хорошему перенести выше и ввести CalcTakeDamage damage?
-            _combatState.CommandQueue.Add(new AttackCombatCommand(_unit.Id, targetDamageable.UnitId, result, _combatState.CommandQueue.Time)); 
+            _combatState.CommandQueue.Add(new AttackCombatCommand(_unit.Id, target.Id, result, _combatState.CommandQueue.Time)); 
             if (!targetDamageable.CanInteract) // а это убрать внутрь TakeDamage
             {
-                _combatState.CommandQueue.Add(new DeathCombatCommand(targetDamageable.UnitId, _combatState.CommandQueue.Time));
+                _combatState.CommandQueue.Add(new DeathCombatCommand(target.Id, _combatState.CommandQueue.Time));
             }
             
             _combatState.CombatEventBus.Raise<AfterDamageEvent, DamageEventResult>(new AfterDamageEvent(_unit, target, result));
             return result;
         }
 
-        public ICombatFeature DeepClone()
+        public IUnitFeatureMutable DeepClone()
         {
-            return new Damageable(UnitId, _canInteract, _doDamage, _getDamage);
+            return new Damageable(_unitId, _canInteract, _doDamage, _getDamage);
         }
     }
 }

@@ -4,7 +4,7 @@
     {
         public static void AddAbility(this IUnit unit, IAbility ability)
         {
-            unit.GetCombatFeature<IAbilitiesHolder>().AddAbility(ability);
+            unit.GetUnitFeature<IAbilitiesHolder>().AddAbility(ability);
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Nuclear.AbilitySystem
         public int Damage { get; private set; }
         public bool IsDead => Health <= 0;
         
-        public TestUnit(string name, int health, int damage, Vector2 position) : base(new UnitId(name))
+        public TestUnit(string name, int health, int damage, Vector2 position) : base(new StringUnitId(name))
         {
             Name = name;
             Health = health;
@@ -35,7 +35,7 @@ namespace Nuclear.AbilitySystem
                 }));
             _features.Add(typeof(IStatusEffectsHolder), new StatusEffectsHolder(Id));
             _features.Add(typeof(IAbilitiesHolder), new AbilitiesHolder());
-            _features.Add(typeof(IHasPositionCombatFeature), new HasPositionCombatFeature(position));
+            _features.Add(typeof(IHasPositionUnitFeature), new HasPositionUnitFeature(position));
         }
 
         private TestUnit(TestUnit testUnit) : base(testUnit)
@@ -46,7 +46,7 @@ namespace Nuclear.AbilitySystem
         }
 
 
-        public override IUnit DeepClone()
+        public override IUnitMutable DeepClone()
         {
             return new TestUnit(this);
         }

@@ -2,7 +2,7 @@ namespace Nuclear.AbilitySystem
 {
     public interface IAbilityAction
     {
-        void Execute(IUnitId sourceId, IUnitId? targetId, ICombatState combatState);
+        void Execute(UnitId sourceId, UnitId? targetId, ICombatStateMutable combatState);
         IAbilityAction DeepClone();
     }
 }

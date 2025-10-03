@@ -1,10 +1,9 @@
 namespace Nuclear.AbilitySystem
 {
-    public interface IDamageable : ICombatFeature
+    public interface IDamageable : IUnitFeatureMutable
     {
         bool CanInteract { get; }
         int TakeDamage(int damage);
         int DealDamage(IUnit target, float multiplier);
-        IUnitId UnitId { get; }
     }
 }

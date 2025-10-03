@@ -1,53 +1,54 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace Nuclear.AbilitySystem
 {
     public sealed class StatusEffectsHolder : IStatusEffectsHolder
     {
-        private readonly List<IStatusEffect> _statusEffects = new();
-        private readonly IUnitId _unitId;
+        private readonly List<IStatusEffectMutable> _statusEffects = new();
+        private readonly UnitId _unitId;
         
-        private ICombatState? _combatState;
+        private ICombatStateMutable? _combatState;
 
-        public ReadOnlyCollection<IStatusEffect> StatusEffects => _statusEffects.AsReadOnly();
+        public ReadOnlyCollection<IStatusEffect> StatusEffects => _statusEffects.OfType<IStatusEffect>().ToList().AsReadOnly();
 
-        public StatusEffectsHolder(IUnitId unitId)
+        public StatusEffectsHolder(UnitId unitId)
         {
             _unitId = unitId;
         }
 
-        public void Subscribe(ICombatState combatState)
+        public void Connect(ICombatStateMutable combatState)
         {
             _combatState = combatState;
             var unit = _combatState.GetUnit(_unitId);
             foreach (var statusEffect in _statusEffects)
             {
-                statusEffect.Subscribe(_combatState);
+                statusEffect.Connect(_combatState);
             }
         }
 
-        public void UnSubscribe()
+        public void Disconnect()
         {
             _combatState = null;
             foreach (var statusEffect in _statusEffects)
             {
-                statusEffect.UnSubscribe();
+                statusEffect.Disconnect();
             }
         }
 
-        public void AddStatusEffect(IStatusEffect statusEffect)
+        public void AddStatusEffect(IStatusEffectMutable statusEffectMutable)
         {
-            _statusEffects.Add(statusEffect);
+            _statusEffects.Add(statusEffectMutable);
         }
 
-        public void RemoveStatusEffect(IStatusEffect statusEffect)
+        public void RemoveStatusEffect(IStatusEffectMutable statusEffectMutable)
         {
-            _statusEffects.Remove(statusEffect);
-            statusEffect.UnSubscribe();
+            _statusEffects.Remove(statusEffectMutable);
+            statusEffectMutable.Disconnect();
         }
 
-        public ICombatFeature DeepClone()
+        public IUnitFeatureMutable DeepClone()
         {
             var result = new StatusEffectsHolder(_unitId);
             foreach (var statusEffect in _statusEffects)

@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 namespace Nuclear.AbilitySystem
 {
-    public abstract class Unit : IUnit
+    public abstract class Unit : IUnitMutable
     {
-        protected readonly Dictionary<Type, ICombatFeature> _features = new();
-        protected ICombatState? _combatState;
+        protected readonly Dictionary<Type, IUnitFeatureMutable> _features = new();
+        protected ICombatStateMutable? _combatState;
         
-        protected Unit(IUnitId id)
+        protected Unit(UnitId id)
         {
             Id = id;
         }
@@ -22,32 +22,32 @@ namespace Nuclear.AbilitySystem
             }
         }
 
-        public IUnitId Id { get; }
+        public UnitId Id { get; }
 
-        public T GetCombatFeature<T>() where T : ICombatFeature
+        public T GetUnitFeature<T>() where T : IUnitFeature
         {
             return (T)_features[typeof(T)];
         }
 
-        public abstract IUnit DeepClone();
+        public abstract IUnitMutable DeepClone();
 
-        public void Subscribe(ICombatState combatState)
+        public void Connect(ICombatStateMutable combatState)
         {
             _combatState = combatState;
 
             foreach (var combatFeature in _features)
             {
-                combatFeature.Value.Subscribe(combatState);
+                combatFeature.Value.Connect(combatState);
             }
         }
 
-        public void UnSubscribe()
+        public void Disconnect()
         {
             _combatState = null;
             
             foreach (var combatFeature in _features)
             {
-                combatFeature.Value.UnSubscribe();
+                combatFeature.Value.Disconnect();
             }
         }
     }

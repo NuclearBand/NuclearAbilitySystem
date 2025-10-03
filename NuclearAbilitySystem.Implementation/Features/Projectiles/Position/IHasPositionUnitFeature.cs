@@ -2,7 +2,7 @@ using System.Numerics;
 
 namespace Nuclear.AbilitySystem
 {
-    public interface IHasPositionCombatFeature : ICombatFeature
+    public interface IHasPositionUnitFeature : IUnitFeatureMutable
     {
         Vector2 Position { get; }
     }

@@ -9,7 +9,7 @@
     <Platforms>AnyCPU</Platforms>
     <IsPackable>true</IsPackable>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.1.10</Version>
+    <Version>0.2.0</Version>
     <Title>NuclearAbilitySystem</Title>
     <Authors>NuclearBand</Authors>
     <Description>A flexible ability system that allows creating, configuring, and executing abilities in games</Description>
@@ -37,6 +37,10 @@
       <PackagePath></PackagePath>
       <Link>icon.png</Link>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Unit\UnitFeatures\" />
   </ItemGroup>
 
 </Project>

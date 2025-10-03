@@ -6,14 +6,14 @@ namespace Nuclear.AbilitySystem
     {
         public static bool IsBully(this IUnit unit)
         {
-            return unit.GetCombatFeature<IStatusEffectsHolder>().StatusEffects.Any(s => s is Bully);
+            return unit.GetUnitFeature<IStatusEffectsHolder>().StatusEffects.Any(s => s is Bully);
         }
         
         public static void AddBullyStatusEffect(this IUnit unit)
         {
             if (!unit.IsBully())
             {
-                unit.GetCombatFeature<IStatusEffectsHolder>().AddStatusEffect(
+                unit.GetUnitFeature<IStatusEffectsHolder>().AddStatusEffect(
                     new Bully(unit.Id));
             }
         }

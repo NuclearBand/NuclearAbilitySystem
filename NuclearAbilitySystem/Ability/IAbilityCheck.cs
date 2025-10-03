@@ -2,8 +2,8 @@ namespace Nuclear.AbilitySystem
 {
     public interface IAbilityCheck
     {
-        bool CanExecute(IUnitId source, IUnitId? target, ICombatState state);
-        void Execute(IUnitId source, IUnitId? target, ICombatState state);
+        bool CanExecute(UnitId source, UnitId? target, ICombatState state);
+        void Execute(UnitId source, UnitId? target, ICombatState state);
         IAbilityCheck DeepClone();
     }
 }

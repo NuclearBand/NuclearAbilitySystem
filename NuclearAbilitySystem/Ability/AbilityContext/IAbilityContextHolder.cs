@@ -3,8 +3,12 @@ namespace Nuclear.AbilitySystem
     public interface IAbilityContextHolder
     {
         T GetContext<T>() where T : IAbilityContext;
-        IAbilityContextHolder DeepClone();
-        void Subscribe(ICombatState combatState);
-        void UnSubscribe();
+    }
+
+    public interface IAbilityContextHolderMutable : IAbilityContextHolder
+    {
+        IAbilityContextHolderMutable DeepClone();
+        void Connect(ICombatState combatState);
+        void Disconnect();
     }
 }

@@ -10,15 +10,15 @@ namespace Nuclear.AbilitySystem
         {
         }
 
-        public float GetDistanceBetween(IUnitId unitId1, IUnitId unitId2)
+        public float GetDistanceBetween(UnitId unitId1, UnitId unitId2)
         {
             if (_combatState == null)
             {
                 return 0f;
             }
             
-            var unit1PositionFeature = _combatState.GetUnit(unitId1).GetCombatFeature<IHasPositionCombatFeature>();
-            var unit2PositionFeature = _combatState.GetUnit(unitId2).GetCombatFeature<IHasPositionCombatFeature>();
+            var unit1PositionFeature = _combatState.GetUnit(unitId1).GetUnitFeature<IHasPositionUnitFeature>();
+            var unit2PositionFeature = _combatState.GetUnit(unitId2).GetUnitFeature<IHasPositionUnitFeature>();
             
             return Vector2.Distance(unit1PositionFeature.Position, unit2PositionFeature.Position);
         }
@@ -28,12 +28,12 @@ namespace Nuclear.AbilitySystem
             return new DistanceBetweenUnitsAbilityContext();
         }
 
-        public void Subscribe(ICombatState combatState)
+        public void Connect(ICombatState combatState)
         {
             _combatState = combatState;
         }
 
-        public void UnSubscribe()
+        public void Disconnect()
         {
             _combatState = null;
         }

@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 
 namespace Nuclear.AbilitySystem
 {
-    public interface IAbilitiesHolder : ICombatFeature
+    public interface IAbilitiesHolder : IUnitFeatureMutable
     {
         void AddAbility(IAbility ability);
         ReadOnlyCollection<IAbility> Abilities { get; }
@@ -12,12 +12,12 @@ namespace Nuclear.AbilitySystem
     public sealed class AbilitiesHolder : IAbilitiesHolder
     {
         private readonly List<IAbility> _abilities = new();
-        
-        public void Subscribe(ICombatState combatState)
+
+        void IUnitFeatureMutable.Connect(ICombatStateMutable combatState)
         {
         }
 
-        public void UnSubscribe()
+        void IUnitFeatureMutable.Disconnect()
         {
         }
 
@@ -28,7 +28,7 @@ namespace Nuclear.AbilitySystem
 
         public ReadOnlyCollection<IAbility> Abilities => _abilities.AsReadOnly();
 
-        public ICombatFeature DeepClone()
+        IUnitFeatureMutable IUnitFeatureMutable.DeepClone()
         {
             var result = new AbilitiesHolder();
             foreach (var ability in _abilities)

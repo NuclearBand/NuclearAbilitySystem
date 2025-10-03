@@ -2,33 +2,33 @@ using System.Collections.Generic;
 
 namespace Nuclear.AbilitySystem
 {
-    public sealed class Bully : IStatusEffect
+    public sealed class Bully : IStatusEffectMutable
     {
-        private readonly IUnitId _unitId;
-        private ICombatState? _combatState;
+        private readonly UnitId _unitId;
+        private ICombatStateMutable? _combatState;
 
-        public Bully(IUnitId unitId)
+        public Bully(UnitId unitId)
         {
             _unitId = unitId;
         }
         
-        public void Subscribe(ICombatState combatState)
+        public void Connect(ICombatStateMutable combatState)
         {
             _combatState = combatState;
-            _combatState.CombatEventBus.Subscribe<AfterDamageEvent, DamageEventResult>(OnAfterDamage);
+            _combatState.CombatEventBus.Connect<AfterDamageEvent, DamageEventResult>(OnAfterDamage);
         }
 
-        public void UnSubscribe()
+        public void Disconnect()
         {
             if (_combatState == null)
             {
                 return;
             }
-            _combatState.CombatEventBus.Unsubscribe<AfterDamageEvent, DamageEventResult>(OnAfterDamage);
+            _combatState.CombatEventBus.Disconnect<AfterDamageEvent, DamageEventResult>(OnAfterDamage);
             _combatState = null;
         }
 
-        public IStatusEffect DeepClone()
+        public IStatusEffectMutable DeepClone()
         {
             return new Bully(_unitId);
         }
@@ -44,15 +44,14 @@ namespace Nuclear.AbilitySystem
                 throw new();
             }
             
-            if (EqualityComparer<IUnitId>.Default.Equals(_unitId, @event.Source.Id) ||
-                EqualityComparer<IUnitId>.Default.Equals(_unitId, @event.Target.Id))
+            if (_unitId == @event.Source.Id || _unitId == @event.Target.Id)
             {
                 return previousResult ?? new (true);
             }
 
             var unit = _combatState.GetUnit(_unitId);
             
-            unit.GetCombatFeature<IDamageable>().DealDamage(@event.Target, 1);
+            unit.GetUnitFeature<IDamageable>().DealDamage(@event.Target, 1);
             return new(false);
         }
     }

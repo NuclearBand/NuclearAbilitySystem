@@ -13,8 +13,8 @@ namespace Nuclear.AbilitySystem
     public static class AbilityActionTargetExtensions
     {
         public static void UpdateAbilityActionTarget(AbilityActionTarget skillActionTarget, 
-            IUnitId? source, IUnitId? target,
-            out IUnitId? effectSource, out IUnitId? effectTarget)
+            UnitId? source, UnitId? target,
+            out UnitId? effectSource, out UnitId? effectTarget)
         {
             switch (skillActionTarget)
             {

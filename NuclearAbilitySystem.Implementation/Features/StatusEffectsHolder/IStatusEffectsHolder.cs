@@ -2,12 +2,12 @@
 
 namespace Nuclear.AbilitySystem
 {
-    public interface IStatusEffectsHolder : ICombatFeature
+    public interface IStatusEffectsHolder : IUnitFeatureMutable
     {
         ReadOnlyCollection<IStatusEffect> StatusEffects { get; }
 
-        void AddStatusEffect(IStatusEffect statusEffect);
-        void RemoveStatusEffect(IStatusEffect statusEffect);
+        void AddStatusEffect(IStatusEffectMutable statusEffectMutable);
+        void RemoveStatusEffect(IStatusEffectMutable statusEffectMutable);
 
     }
 }

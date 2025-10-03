@@ -7,7 +7,7 @@ namespace Nuclear.AbilitySystem
     {
         private readonly Dictionary<Type, List<Delegate>> _combatEvents = new();
 
-        public void Subscribe<TEvent, TResult>(Func<TEvent, TResult?, TResult?> func) 
+        public void Connect<TEvent, TResult>(Func<TEvent, TResult?, TResult?> func) 
             where TEvent : ICombatEvent
             where TResult : ICombatEventResult
         {
@@ -37,7 +37,7 @@ namespace Nuclear.AbilitySystem
             return result;
         }
 
-        public void Unsubscribe<TEvent, TResult>(Func<TEvent, TResult?, TResult?> func) 
+        public void Disconnect<TEvent, TResult>(Func<TEvent, TResult?, TResult?> func) 
             where TEvent : ICombatEvent
             where TResult : ICombatEventResult
         {

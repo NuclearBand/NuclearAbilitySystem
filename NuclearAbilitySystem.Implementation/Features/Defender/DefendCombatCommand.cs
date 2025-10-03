@@ -1,4 +1,4 @@
 namespace Nuclear.AbilitySystem
 {
-    public record DefendCombatCommand(IUnitId DefenderId, IUnitId TargetId, int Time) : ICombatCommand;
+    public record DefendCombatCommand(UnitId DefenderId, UnitId TargetId, int Time) : ICombatCommand;
 }

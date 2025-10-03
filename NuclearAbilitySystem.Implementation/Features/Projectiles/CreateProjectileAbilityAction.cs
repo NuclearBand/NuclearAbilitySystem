@@ -19,13 +19,13 @@ namespace Nuclear.AbilitySystem
         public ProjectileName ProjectileName { get; }
         public float Velocity { get; }
         public ReadOnlyCollection<IAbilityAction>? OnEnd { get; }
-        public void Execute(IUnitId sourceId, IUnitId? targetId, ICombatState context)
+        public void Execute(UnitId sourceId, UnitId? targetId, ICombatStateMutable context)
         {
             var source = context.GetUnit(sourceId);
             var target = context.GetUnit(targetId!);
             
-            if (!source.GetCombatFeature<IDamageable>().CanInteract || 
-                !target.GetCombatFeature<IDamageable>().CanInteract)
+            if (!source.GetUnitFeature<IDamageable>().CanInteract || 
+                !target.GetUnitFeature<IDamageable>().CanInteract)
                 return;
 
             var distanceContext = context.AbilityContextHolder.GetContext<IDistanceBetweenUnitsAbilityContext>();

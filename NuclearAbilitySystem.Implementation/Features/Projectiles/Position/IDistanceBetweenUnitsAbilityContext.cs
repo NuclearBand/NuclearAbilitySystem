@@ -2,6 +2,6 @@ namespace Nuclear.AbilitySystem
 {
     public interface IDistanceBetweenUnitsAbilityContext : IAbilityContext
     {
-        float GetDistanceBetween(IUnitId unitId1, IUnitId unitId2);
+        float GetDistanceBetween(UnitId unitId1, UnitId unitId2);
     }
 }
