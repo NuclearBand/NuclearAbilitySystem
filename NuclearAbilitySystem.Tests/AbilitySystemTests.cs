@@ -20,7 +20,7 @@ namespace AbilitySystemTests
             state.AbilityContextHolder.GetContext<ITurnAbilityContext>().NextTurn();
 
             Assert.AreEqual(true, doubleStrikeAbility.CanExecute(null!, null!, state));
-            var result = state.ExecuteAbility(new StringUnitId("A"), 0, new StringUnitId("B"));
+            var result = state.ExecuteAbilityOnClone(new StringUnitId("A"), 0, new StringUnitId("B"));
 
             // Tests
             Assert.AreEqual(6, result.Commands.Count);
@@ -46,11 +46,12 @@ namespace AbilitySystemTests
                 .WithUnit(new TestUnit("C", 5, 1, new Vector2(0, 0)).WithBullyStatusEffect())
                 .Build();
 
+            state.Connect();
             state.GetUnit(new StringUnitId("A")).GetUnitFeature<IDamageable>()
                 .DealDamage(state.GetUnit(new StringUnitId("B")), 1);
             state.GetUnit(new StringUnitId("A")).GetUnitFeature<IDamageable>()
                 .DealDamage(state.GetUnit(new StringUnitId("B")), 1);
-
+            state.Disconnect();
             var result = state.CommandQueue.CalculateCommandQueue();
             Assert.AreEqual(2, result.Count);
             Assert.AreEqual(new AttackCombatCommand(new StringUnitId("A"), new StringUnitId("B"), 5, 0), result[0]);
@@ -67,10 +68,12 @@ namespace AbilitySystemTests
                 .WithUnit(new TestUnit("D", 5, 1, new Vector2(0, 0)).WithBullyStatusEffect())
                 .Build();
 
+            state.Connect();
             state.GetUnit(new StringUnitId("A")).GetUnitFeature<IDamageable>()
                 .DealDamage(state.GetUnit(new StringUnitId("B")), 1);
             state.GetUnit(new StringUnitId("A")).GetUnitFeature<IDamageable>()
                 .DealDamage(state.GetUnit(new StringUnitId("B")), 1);
+            state.Disconnect();
 
             var result = state.CommandQueue.CalculateCommandQueue();
             Assert.AreEqual(6, result.Count);
@@ -96,8 +99,10 @@ namespace AbilitySystemTests
                 .WithUnit(new TestUnit("E", 5, 1, new Vector2(0, 0)).WithDefenderStatusEffect())
                 .Build();
 
+            state.Connect();
             state.GetUnit(new StringUnitId("A")).GetUnitFeature<IDamageable>()
                 .DealDamage(state.GetUnit(new StringUnitId("B")), 1);
+            state.Disconnect();
 
             var result = state.CommandQueue.CalculateCommandQueue();
             Assert.AreEqual(3, result.Count);
@@ -116,8 +121,10 @@ namespace AbilitySystemTests
                 .WithUnit(new TestUnit("D", 5, 1, new Vector2(0, 0)).WithDefenderStatusEffect())
                 .Build();
 
+            state.Connect();
             state.GetUnit(new StringUnitId("A")).GetUnitFeature<IDamageable>()
                 .DealDamage(state.GetUnit(new StringUnitId("B")), 1);
+            state.Disconnect();
 
             var result = state.CommandQueue.CalculateCommandQueue();
             Assert.AreEqual(4, result.Count);
@@ -137,8 +144,8 @@ namespace AbilitySystemTests
                 .WithUnit(new TestUnit("B", 5, 0, new Vector2(0, 2)))
                 .Build();
 
-             state.ExecuteAbility(new StringUnitId("A"), 0, new StringUnitId("B"));
-            state.ExecuteAbility(new StringUnitId("A"), 0, new StringUnitId("B"));
+            state.ExecuteAbilityOnClone(new StringUnitId("A"), 0, new StringUnitId("B"));
+            state.ExecuteAbilityOnClone(new StringUnitId("A"), 0, new StringUnitId("B"));
         }
     }
 }

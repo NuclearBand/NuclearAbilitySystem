@@ -5,10 +5,10 @@ namespace Nuclear.AbilitySystem
     public interface IAbilityExecutionResult
     {
         ReadOnlyCollection<ICombatCommand> Commands { get; }
-        ICombatState ResultState { get; }
+        ICombatStateMutable ResultState { get; }
     }
 
-    public record AbilityExecutionResult(ReadOnlyCollection<ICombatCommand> Commands, ICombatState ResultState)
+    public record AbilityExecutionResult(ReadOnlyCollection<ICombatCommand> Commands, ICombatStateMutable ResultState)
         : IAbilityExecutionResult;
 
 }

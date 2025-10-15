@@ -20,20 +20,22 @@ namespace Nuclear.AbilitySystem
         }
 
         public IAbilityContextHolder AbilityContextHolder => _abilityContextHolder;
-        public IAbilityExecutionResult ExecuteAbility(UnitId sourceId, int abilityIndex, UnitId? targetId)
+        public IAbilityExecutionResult ExecuteAbilityOnClone(UnitId sourceId, int abilityIndex, UnitId? targetId)
         {
             var resultState = DeepClone();
             resultState.Connect();
-            
-            resultState.GetUnit(sourceId)
+            var result =  resultState.ExecuteAbility(sourceId, abilityIndex, targetId);
+            resultState.Disconnect();
+            return result;
+        }
+
+        public IAbilityExecutionResult ExecuteAbility(UnitId sourceId, int abilityIndex, UnitId? targetId)
+        {
+            GetUnit(sourceId)
                 .GetUnitFeature<IAbilitiesHolder>()
                 .Abilities[abilityIndex]
-                .Execute(sourceId, targetId, resultState);
-            
-            resultState.Disconnect();
-            var commands = resultState.CommandQueue.CalculateCommandQueue();
-            
-            return new AbilityExecutionResult(commands, resultState);
+                .Execute(sourceId, targetId, this);
+            return new AbilityExecutionResult(CommandQueue.CalculateCommandQueue(), this);
         }
 
         public ICombatEventBus CombatEventBus => _combatEventBus;
@@ -46,19 +48,19 @@ namespace Nuclear.AbilitySystem
 
         public ReadOnlyCollection<IUnit> GetUnits() => _units.OfType<IUnit>().ToList().AsReadOnly();
         
-        private void Connect()
+        public void Connect()
         {
             _units.ForEach(u => u.Connect(this));
             _abilityContextHolder.Connect(this);
         }
 
-        private void Disconnect()
+        public void Disconnect()
         {
             _units.ForEach(u => u.Disconnect());
             _abilityContextHolder.Disconnect();
         }
         
-        private CombatState DeepClone()
+        public ICombatStateMutable DeepClone()
         {
             return new CombatState(_units.Select(u => u.DeepClone()).ToList(),
                 _abilityContextHolder.DeepClone());
